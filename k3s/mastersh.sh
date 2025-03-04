@@ -34,7 +34,7 @@ EOF
 sudo sysctl --system
 
 echo "===================== 6. Hostname değiştiriliyor... =========================="
-sudo hostnamectl set-hostname k3smaster
+sudo hostnamectl set-hostname k8smaster
 
 echo "============= 7. ssh ayarları yapılıyor ============="
 # Ssh ile baglanabilmek icin ssh/sshd_config dosyasi degistiriliyor.
@@ -54,7 +54,7 @@ echo 'source <(kubectl completion bash)' >> ~/.bashrc
 source ~/.bashrc
 
 
-echo "$(hostname -I | awk '{print $1}') k3sworker" | sudo tee -a /etc/hosts
+echo "$(hostname -I | awk '{print $1}') k8smaster" | sudo tee -a /etc/hosts
 
 
 echo "===================== 9. Reboot Ediliyor... =========================="  
