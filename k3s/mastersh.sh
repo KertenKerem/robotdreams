@@ -4,22 +4,15 @@ echo "===================== 1. Sunucu güncellemeleri yapılıyor... ===========
 #sudo apt update && sudo apt upgrade -y
 sudo apt update -y
 
-echo "===================== 2. root user aktif ediliyor ====================="
-sudo su
-sudo -i
-
 echo "===================== 3. Swap devre dışı bırakılıyor... =========================="
 sudo swapoff -a
 sudo sed -i '/ swap / s/^\(.*\)$/#\1/g' /etc/fstab
 
 echo "===================== 4. Firewall disable... =========================="
-
 sudo ufw disable
 
-# UFW durumunu görüntüleme
 echo "===================== UFW durumu ====================="
 sudo ufw status verbose
-
 
 echo "===================== 5. Gerekli kernel modülleri yükleniyor... =========================="
 sudo modprobe overlay
@@ -45,7 +38,8 @@ sudo hostnamectl set-hostname k3smaster
 
 echo "============= 7. ssh ayarları yapılıyor ============="
 # Ssh ile baglanabilmek icin ssh/sshd_config dosyasi degistiriliyor.
-sudo sed -i 's/^PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
+sudo sed -i 's/^#PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
+sudo sed -i 's/^#PermitRootLogin prohibit-password/PermitRootLogin yes/’ /etc/ssh/sshd_config
 sudo systemctl reload sshd
 
 echo "============= 8. Araçlar yükleniyor. ============="
@@ -55,12 +49,12 @@ sudo apt install ufw fail2ban htop nmap -y
 sudo apt install openssh-server -y
 
 echo "=============10. HELM Install-AutoCompletek3s============="
-curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+curl -k https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
 echo 'source <(kubectl completion bash)' >> ~/.bashrc
 source ~/.bashrc
 
 
-echo "192.168.1.49 k3sworker" | sudo tee -a /etc/hosts
+echo "$(hostname -I | awk '{print $1}') k3sworker" | sudo tee -a /etc/hosts
 
 
 echo "===================== 9. Reboot Ediliyor... =========================="  
